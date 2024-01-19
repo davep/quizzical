@@ -17,6 +17,7 @@ from httpx import AsyncClient, RequestError, HTTPStatusError
 # Local imports.
 from .category import Category
 from .question import Difficulty, Question, Type
+from .response import Code
 
 
 ##############################################################################
@@ -118,8 +119,10 @@ class OpenTriviaDB:
 
         response = loads(await self._call("api", **params))
 
-        if response["response_code"] != 0:  # TODO: Use proper value.
-            raise Exception(f"Response not good")  # TODO: Proper exceptions
+        # TODO: for things like invalid or exhausted tokens, or a rate
+        # limit, bounce back around, perhaps. For now though just do a
+        # simple sanity check.
+        Code(response.get("response_code", Code.UNKNOWN)).maybe_raise()
 
         return [Question(**question) for question in response["results"]]
 
