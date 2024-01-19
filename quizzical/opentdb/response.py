@@ -72,17 +72,16 @@ class Code(Enum):
         """Raise any appropriate exceptions based on the code."""
         if self is Code.SUCCESS:
             return
-        if (
-            exception := {
+        try:
+            raise {
                 Code.NO_RESULTS: NoResults,
                 Code.INVALID_PARAMETER: InvalidParameter,
                 Code.TOKEN_NOT_FOUND: TokenNotFound,
                 Code.TOKEN_EMPTY: TokenEmpty,
                 Code.RATE_LIMIT: RateLimit,
-            }.get(self)
-        ) is not None:
-            raise exception()
-        raise ValueError(f"Not a valid response code: {self}")
+            }[self]()
+        except KeyError:
+            raise ValueError(f"Not a valid response code: {self}")
 
 
 ### response.py ends here
