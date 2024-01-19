@@ -7,7 +7,7 @@ from __future__ import annotations
 ##############################################################################
 # Python imports.
 from json import loads
-from typing_extensions import Final, Literal
+from typing_extensions import Final
 
 ##############################################################################
 # HTTPX imports.
@@ -16,15 +16,7 @@ from httpx import AsyncClient, RequestError, HTTPStatusError
 ##############################################################################
 # Local imports.
 from .category import Category
-from .questions import Questions
-
-##############################################################################
-QuestionDifficulty = Literal["", "easy", "medium", "hard"]
-"""The valid question difficulty levels."""
-
-##############################################################################
-QuestionType = Literal["", "multiple", "boolean"]
-"""The valid types of question."""
+from .question import Difficulty, Question, Type
 
 
 ##############################################################################
@@ -98,9 +90,9 @@ class OpenTriviaDB:
         self,
         amount: int = 10,
         category: int | Category | None = None,
-        difficulty: QuestionDifficulty = "",
-        type: QuestionType = "",
-    ) -> Questions:
+        difficulty: Difficulty | None = None,
+        type: Type | None = None,
+    ) -> list[Question]:
         """Get a collection of questions from the API.
 
         Args:
@@ -112,20 +104,24 @@ class OpenTriviaDB:
         Returns:
             The questions.
         """
+
         if isinstance(category, Category):
             category = category.id
-        # TODO: Turn into actual question objects.
-        return Questions().populate_with(
-            loads(
-                await self._call(
-                    "api",
-                    amount=str(amount),
-                    category="" if category is None else str(category),
-                    difficulty=difficulty,
-                    type=type,
-                )
-            )
-        )
+
+        params = {"amount": str(amount)}
+        if category is not None:
+            params["category"] = str(category)
+        if difficulty is not None:
+            params["difficulty"] = difficulty
+        if type is not None:
+            params["type"] = type
+
+        response = loads(await self._call("api", **params))
+
+        if response["response_code"] != 0:  # TODO: Use proper value.
+            raise Exception(f"Response not good")  # TODO: Proper exceptions
+
+        return [Question(**question) for question in response["results"]]
 
 
 ### client.py ends here

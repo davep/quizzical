@@ -3,6 +3,7 @@
 ##############################################################################
 # Python imports.
 from dataclasses import dataclass
+from html import unescape
 
 
 ##############################################################################
@@ -15,6 +16,10 @@ class Category:
 
     name: str
     """The name of the category."""
+
+    def __post_init__(self) -> None:
+        """Tidy up the question data once it's been loaded up."""
+        self.name = unescape(self.name)
 
 
 ### category.py ends here
