@@ -7,7 +7,7 @@ from __future__ import annotations
 ##############################################################################
 # Python imports.
 from json import loads
-from typing import Any, Final
+from typing import Final
 
 ##############################################################################
 # HTTPX imports.
