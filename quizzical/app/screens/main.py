@@ -9,6 +9,7 @@ from textual.widgets import Footer, Header
 ##############################################################################
 # Local imports.
 from ... import __version__
+from ..widgets import Logo
 
 
 ##############################################################################
@@ -32,6 +33,7 @@ class Main(Screen):
     def compose(self) -> ComposeResult:
         """Compose the main screen."""
         yield Header()
+        yield Logo()
         yield Footer()
 
 
