@@ -4,6 +4,7 @@
 # Local imports.
 from .category import Category
 from .client import OpenTriviaDB
+from .counts import Counts
 from .question import Question
 from .response import (
     Code,
@@ -19,6 +20,7 @@ from .response import (
 __all__ = [
     "Category",
     "Code",
+    "Counts",
     "InvalidParameter",
     "NoResults",
     "OpenTriviaDB",
