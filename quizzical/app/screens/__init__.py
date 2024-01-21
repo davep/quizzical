@@ -3,10 +3,11 @@
 ##############################################################################
 # Local imports.
 from .main import Main
+from .quiz_maker import QuizMaker
 
 ##############################################################################
 # Exports.
-__all__ = ["Main"]
+__all__ = ["Main", "QuizMaker"]
 
 
 ### __init__.py ends here
