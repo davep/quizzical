@@ -5,7 +5,7 @@
 from .category import Category
 from .client import OpenTriviaDB
 from .counts import Counts
-from .question import Question
+from .question import Difficulty, Question, Type
 from .response import (
     Code,
     InvalidParameter,
@@ -21,6 +21,7 @@ __all__ = [
     "Category",
     "Code",
     "Counts",
+    "Difficulty",
     "InvalidParameter",
     "NoResults",
     "OpenTriviaDB",
@@ -28,6 +29,7 @@ __all__ = [
     "RateLimit",
     "TokenEmpty",
     "TokenNotFound",
+    "Type",
 ]
 
 ### __init__.py ends here
