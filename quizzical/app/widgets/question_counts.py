@@ -1,6 +1,10 @@
 """Provides a widget that shows question count totals."""
 
 ##############################################################################
+# Backward compatibility.
+from __future__ import annotations
+
+##############################################################################
 # Rich imports.
 from rich.align import Align
 from rich.console import Group
@@ -30,7 +34,7 @@ class QuestionCounts(Widget):
     }
     """
 
-    counts: reactive[Counts] = reactive(Counts(0, 0, 0, 0))
+    counts: reactive[Counts | None] = reactive(None)
     """The counts to show."""
 
     def __init__(
@@ -59,12 +63,15 @@ class QuestionCounts(Widget):
         display = Table(expand=True)
         for title in ("Total", "Pending", "Verified", "Rejected"):
             display.add_column(title, no_wrap=True, justify="right")
-        display.add_row(
-            str(self.counts.questions),
-            str(self.counts.pending),
-            str(self.counts.verified),
-            str(self.counts.rejected),
-        )
+        if self.counts is None:
+            display.add_row(*(["Loading..."] * 4))
+        else:
+            display.add_row(
+                str(self.counts.questions),
+                str(self.counts.pending),
+                str(self.counts.verified),
+                str(self.counts.rejected),
+            )
         return Group(Align(self._title, align="center"), display)
 
 
