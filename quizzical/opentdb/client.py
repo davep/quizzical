@@ -7,15 +7,16 @@ from __future__ import annotations
 ##############################################################################
 # Python imports.
 from json import loads
-from typing_extensions import Final
+from typing import Any, Final
 
 ##############################################################################
 # HTTPX imports.
-from httpx import AsyncClient, RequestError, HTTPStatusError
+from httpx import AsyncClient, HTTPStatusError, RequestError
 
 ##############################################################################
 # Local imports.
 from .category import Category
+from .counts import Counts
 from .question import Difficulty, Question, Type
 from .response import Code
 
@@ -39,6 +40,10 @@ class OpenTriviaDB:
         """The HTTPX client."""
         self._categories: list[Category] = []
         """The list of categories."""
+        self._overall_counts: Counts | None = None
+        """The overall counts of questions in the backend."""
+        self._category_counts: dict[int, Counts] = {}
+        """The question counts per category."""
 
     @property
     def _client(self) -> AsyncClient:
@@ -125,6 +130,56 @@ class OpenTriviaDB:
         Code(response.get("response_code", Code.UNKNOWN)).maybe_raise()
 
         return [Question(**question) for question in response["results"]]
+
+    async def _counts(self) -> None:
+        """Get the low-level counts data."""
+        if self._overall_counts is not None:
+            return
+        counts = loads(await self._call("api_count_global"))
+        self._overall_counts = Counts(
+            counts["overall"]["total_num_of_questions"],
+            counts["overall"]["total_num_of_pending_questions"],
+            counts["overall"]["total_num_of_verified_questions"],
+            counts["overall"]["total_num_of_rejected_questions"],
+        )
+        self._category_counts = {
+            int(category): Counts(
+                category_counts["total_num_of_questions"],
+                category_counts["total_num_of_pending_questions"],
+                category_counts["total_num_of_verified_questions"],
+                category_counts["total_num_of_rejected_questions"],
+            )
+            for category, category_counts in counts["categories"].items()
+        }
+
+    async def overall_counts(self) -> Counts:
+        """Gets the overall question counts.
+
+        Returns:
+            The overall counts from the backend.
+
+        Note:
+            Because this is a low-importance value that won't change very
+            often, the value is cached for the lifetime of the client
+            object.
+        """
+        await self._counts()
+        assert self._overall_counts is not None
+        return self._overall_counts
+
+    async def category_counts(self) -> dict[int, Counts]:
+        """Gets the question counts per category.
+
+        Returns:
+            The question counts per category.
+
+        Note:
+            Because this is a low-importance value that won't change very
+            often, the value is cached for the lifetime of the client
+            object.
+        """
+        await self._counts()
+        return self._category_counts
 
 
 ### client.py ends here
