@@ -66,7 +66,7 @@ class QuestionCounts(Widget):
         """Render the content of the widget."""
         display = Table(expand=True)
         for title in ("Total", "Pending", "Verified", "Rejected"):
-            display.add_column(title, no_wrap=True, justify="right")
+            display.add_column(title, no_wrap=True, justify="right", ratio=1)
         if self.counts is None:
             display.add_row(*(["Loading..."] * 4))
         else:
