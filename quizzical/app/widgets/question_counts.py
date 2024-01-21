@@ -5,6 +5,10 @@
 from __future__ import annotations
 
 ##############################################################################
+# Humanize imports.
+from humanize import intcomma
+
+##############################################################################
 # Rich imports.
 from rich.align import Align
 from rich.console import Group
@@ -67,10 +71,10 @@ class QuestionCounts(Widget):
             display.add_row(*(["Loading..."] * 4))
         else:
             display.add_row(
-                str(self.counts.questions),
-                str(self.counts.pending),
-                str(self.counts.verified),
-                str(self.counts.rejected),
+                intcomma(self.counts.questions),
+                intcomma(self.counts.pending),
+                intcomma(self.counts.verified),
+                intcomma(self.counts.rejected),
             )
         return Group(Align(self._title, align="center"), display)
 
