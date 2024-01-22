@@ -25,7 +25,7 @@ class Logo(Widget):
         content-align: center middle;
         color: $warning;
         background: $primary;
-        padding-bottom:1 ;
+        padding-bottom: 1;
     }
     """
 
