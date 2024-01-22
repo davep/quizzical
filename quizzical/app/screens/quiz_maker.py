@@ -73,6 +73,7 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
     def __init__(self, categories: list[Category]) -> None:
         super().__init__()
         self._categories = categories
+        """The known categories for the questions."""
 
     def compose(self) -> ComposeResult:
         """Compose the content of the dialog."""
