@@ -2,7 +2,8 @@
 
 ##############################################################################
 # Python imports.
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from typing import Any
 
 ##############################################################################
 # Local imports.
@@ -28,6 +29,11 @@ class QuizParameters:
 
     question_type: Type | None = None
     """The type of question to ask."""
+
+    @property
+    def as_json(self) -> dict[str, Any]:
+        """The quiz parameters as a JSON-friendly dictionary."""
+        return asdict(self)
 
 
 ### quiz_parameters.py ends here
