@@ -52,10 +52,20 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
 
     BINDINGS = [("escape", "cancel"), ("f2", "okay")]
 
-    def __init__(self, categories: list[Category]) -> None:
+    def __init__(
+        self, categories: list[Category], quiz: QuizParameters | None = None
+    ) -> None:
+        """Initialise the quiz maker.
+
+        Args:
+            categories: The list of categories that the user can select from.
+            quiz: An optional existing quiz to populate the dialog with.
+        """
         super().__init__()
         self._categories = categories
         """The known categories for the questions."""
+        self._quiz = quiz
+        """Existing quiz parameters to populate the list with."""
 
     def compose(self) -> ComposeResult:
         """Compose the content of the dialog."""
@@ -108,6 +118,21 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
                 yield Button("Okay [dim]\\[F2][/]", id="okay")
                 yield Button("Cancel [dim]\\[Esc][/]", id="cancel")
 
+    def on_mount(self) -> None:
+        """Configure the dialog once the DOM is ready."""
+        if self._quiz is not None:
+            self.query_one("#title", Input).value = self._quiz.title
+            self.query_one("#number", Input).value = str(self._quiz.number_of_questions)
+            self.query_one("#category", Select).value = (
+                self._quiz.category.id if self._quiz.category else Select.BLANK
+            )
+            self.query_one("#difficulty", Select).value = (
+                self._quiz.difficulty or Select.BLANK
+            )
+            self.query_one("#type", Select).value = (
+                self._quiz.question_type or Select.BLANK
+            )
+
     @on(Button.Pressed, "#okay")
     def action_okay(self) -> None:
         """React to the user confirming their choices."""
@@ -124,7 +149,11 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
                     title=self.query_one("#title", Input).value,
                     number_of_questions=int(self.query_one("#number", Input).value),
                     category=(
-                        self._categories[category]
+                        next(
+                            candidate
+                            for candidate in self._categories
+                            if candidate.id == category
+                        )
                         if isinstance(
                             category := self.query_one("#category", Select).value, int
                         )

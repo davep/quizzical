@@ -79,6 +79,17 @@ class Main(Screen):
         """Load up the question counts."""
         self.query_one(QuestionCounts).counts = await self._trivia.overall_counts()
 
+    @on(QuizList.Changed)
+    def _update_buttons(self, event: QuizList.Changed) -> None:
+        """Update the state of the buttons.
+
+        Args:
+            event: The event to handle.
+        """
+        self.query_one("#run").disabled = event.quiz_list.highlighted is None
+        self.query_one("#edit").disabled = event.quiz_list.highlighted is None
+        self.query_one("#delete").disabled = event.quiz_list.highlighted is None
+
     @on(Button.Pressed, "#run")
     def action_run(self) -> None:
         """Run the currently-hilighted quiz."""
@@ -91,17 +102,25 @@ class Main(Screen):
         if quiz := await self.app.push_screen_wait(
             QuizMaker(await self._trivia.categories())
         ):
-            self.notify(f"{quiz!r}")
+            self.query_one(QuizList).add_quiz(quiz)
 
     @on(Button.Pressed, "#edit")
-    def action_edit(self) -> None:
+    @work
+    async def action_edit(self) -> None:
         """Edit the currently-highlighted quiz."""
-        self.notify("TODO")
+        quizzes = self.query_one(QuizList)
+        if (to_edit := quizzes.highlighted) is not None:
+            if quiz := await self.app.push_screen_wait(
+                QuizMaker(await self._trivia.categories(), quizzes.quizzes[to_edit])
+            ):
+                quizzes.modify_quiz(to_edit, quiz)
 
     @on(Button.Pressed, "#delete")
     def action_delete(self) -> None:
         """Delete the currently-highlighted quiz."""
-        self.notify("TODO")
+        if (to_delete := self.query_one(QuizList).highlighted) is not None:
+            # TODO: confirm.
+            self.query_one(QuizList).remove_quiz(to_delete)
 
 
 ### main.py ends here
