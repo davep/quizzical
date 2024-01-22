@@ -11,7 +11,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.screen import ModalScreen
-from textual.validation import Integer
+from textual.validation import Integer, Length
 from textual.widgets import Button, Input, Label, Select
 
 ##############################################################################
@@ -23,6 +23,9 @@ from ...opentdb import Category, Difficulty, Type
 @dataclass
 class QuizParameters:
     """Holds the chosen parameters for making a quiz."""
+
+    title: str
+    """The title for the quiz."""
 
     number_of_questions: int = 10
     """The number of questions in the quiz."""
@@ -79,6 +82,12 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
         """Compose the content of the dialog."""
         with Vertical() as dialog:
             dialog.border_title = "Quiz Options"
+            yield Label("Title:")
+            yield Input(
+                placeholder="The title for the quiz",
+                validators=Length(minimum=1),
+                id="title",
+            )
             yield Label("Number of questions:")
             yield Input(
                 "10",
@@ -123,9 +132,17 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
     @on(Button.Pressed, "#okay")
     def action_okay(self) -> None:
         """React to the user confirming their choices."""
-        if self.query_one("#number", Input).is_valid:
+        okay = True
+        if not (okay := okay and self.query_one("#title", Input).is_valid):
+            self.notify("Please enter a title", title="Missing Title", severity="error")
+        if not (okay := okay and self.query_one("#number", Input).is_valid):
+            self.notify(
+                "Please enter a valid number", title="Invalid Number", severity="error"
+            )
+        if okay:
             self.dismiss(
                 QuizParameters(
+                    title=self.query_one("#title", Input).value,
                     number_of_questions=int(self.query_one("#number", Input).value),
                     category=(
                         self._categories[category]
@@ -150,10 +167,6 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
                         else None
                     ),
                 )
-            )
-        else:
-            self.notify(
-                "Please enter a valid number", title="Invalid Number", severity="error"
             )
 
     @on(Button.Pressed, "#cancel")
