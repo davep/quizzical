@@ -3,9 +3,10 @@
 ##############################################################################
 # Local imports.
 from .locations import data_dir
+from .quiz_parameters import QuizParameters
 
 ##############################################################################
 # Exports.
-__all__ = ["data_dir"]
+__all__ = ["data_dir", "QuizParameters"]
 
 ### __init__.py ends here
