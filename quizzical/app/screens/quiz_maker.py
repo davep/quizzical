@@ -119,10 +119,6 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
                 yield Button("Okay [dim]\\[F2][/]", id="okay")
                 yield Button("Cancel [dim]\\[Esc][/]", id="cancel")
 
-    @property
-    def _category(self) -> Category | None:
-        return
-
     @on(Button.Pressed, "#okay")
     def action_okay(self) -> None:
         """React to the user confirming their choices."""
