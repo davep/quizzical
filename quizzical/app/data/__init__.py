@@ -3,11 +3,11 @@
 ##############################################################################
 # Local imports.
 from .locations import data_dir
-from .quiz_parameters import QuizParameters
+from .quiz_parameters import QuizParameters, QuizTimer
 from .quizzes_file import quizzes_file
 
 ##############################################################################
 # Exports.
-__all__ = ["data_dir", "QuizParameters", "quizzes_file"]
+__all__ = ["data_dir", "QuizParameters", "quizzes_file", "QuizTimer"]
 
 ### __init__.py ends here

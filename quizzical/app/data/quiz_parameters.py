@@ -3,11 +3,35 @@
 ##############################################################################
 # Python imports.
 from dataclasses import asdict, dataclass
+from enum import Enum
 from typing import Any
 
 ##############################################################################
 # Local imports.
 from ...opentdb import Category, Difficulty, Type
+
+
+##############################################################################
+class QuizTimer(Enum):
+    """The types of timer a quiz can have."""
+
+    NONE = 0
+    """No timer."""
+
+    PER_QUESTION = 1
+    """Timer per question."""
+
+    WHOLE_QUIZ = 2
+    """Timer for whole quiz."""
+
+    @property
+    def description(self) -> str:
+        """The description of the timer type."""
+        return {
+            self.NONE: "No Timer",
+            self.PER_QUESTION: "Seconds per question",
+            self.WHOLE_QUIZ: "Seconds for the whole quiz",
+        }[self]
 
 
 ##############################################################################
@@ -29,6 +53,19 @@ class QuizParameters:
 
     question_type: Type | None = None
     """The type of question to ask."""
+
+    timer_type: QuizTimer = QuizTimer.NONE
+    """The type of timer to use for the quiz."""
+
+    timer_value: int = 0
+    """The number of seconds for the timer, if there is one."""
+
+    def __post_init__(self) -> None:
+        """Tidy up the data post-init."""
+        # If we've been pulled in from a JSON source, it's likely that we
+        # got the timer type back as an integer; to save a lot of cocking
+        # about with decoders and stuff, let's just cast it here.
+        self.timer_type = QuizTimer(self.timer_type)
 
     @property
     def as_json(self) -> dict[str, Any]:

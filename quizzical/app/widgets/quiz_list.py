@@ -66,7 +66,12 @@ class QuizList(OptionList):
     def _changed(self) -> None:
         """Handle the list being changed."""
         quizzes_file().write_text(
-            dumps([quiz.as_json for quiz in self.quizzes], indent=4), encoding="utf-8"
+            dumps(
+                [quiz.as_json for quiz in self.quizzes],
+                indent=4,
+                default=lambda x: x.value,
+            ),
+            encoding="utf-8",
         )
         self.post_message(self.Changed(self))
 
