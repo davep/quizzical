@@ -16,6 +16,7 @@ from ...opentdb import OpenTriviaDB
 from ..widgets import Logo, QuestionCounts, QuizList
 from .confirm import Confirm
 from .quiz_maker import QuizMaker
+from .quiz_taker import QuizTaker
 
 
 ##############################################################################
@@ -94,7 +95,11 @@ class Main(Screen):
     @on(Button.Pressed, "#run")
     def action_run(self) -> None:
         """Run the currently-hilighted quiz."""
-        self.notify("TODO")
+        quizzes = self.query_one(QuizList)
+        if quizzes.highlighted is not None:
+            self.app.push_screen(
+                QuizTaker(self._trivia, quizzes.quizzes[quizzes.highlighted])
+            )
 
     @on(Button.Pressed, "#new")
     @work
