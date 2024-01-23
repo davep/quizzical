@@ -14,6 +14,7 @@ from textual.widgets import Button, Label
 from ... import __version__
 from ...opentdb import OpenTriviaDB
 from ..widgets import Logo, QuestionCounts, QuizList
+from .confirm import Confirm
 from .quiz_maker import QuizMaker
 
 
@@ -116,11 +117,14 @@ class Main(Screen):
                 quizzes.modify_quiz(to_edit, quiz)
 
     @on(Button.Pressed, "#delete")
-    def action_delete(self) -> None:
+    @work
+    async def action_delete(self) -> None:
         """Delete the currently-highlighted quiz."""
         if (to_delete := self.query_one(QuizList).highlighted) is not None:
-            # TODO: confirm.
-            self.query_one(QuizList).remove_quiz(to_delete)
+            if await self.app.push_screen_wait(
+                Confirm("Delete Quiz", "Are you sure you want to delete that quiz?")
+            ):
+                self.query_one(QuizList).remove_quiz(to_delete)
 
 
 ### main.py ends here
