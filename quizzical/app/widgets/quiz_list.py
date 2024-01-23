@@ -18,6 +18,10 @@ from textual.reactive import var
 from textual.widgets import OptionList
 
 ##############################################################################
+# Backward-compatible typing.
+from typing_extensions import Self
+
+##############################################################################
 # Local imports.
 from ..data import QuizParameters, quizzes_file
 
@@ -38,8 +42,19 @@ class QuizList(OptionList):
     }
     """
 
+    BINDINGS = [
+        ("s, j, right", "cursor_down"),
+        ("w, k, left", "cursor_up"),
+    ]
+
     quizzes: var[list[QuizParameters]] = var(list, always_update=True, init=False)
     """The list of all the quiz parameters."""
+
+    def clear_options(self) -> Self:
+        """Workaround for https://github.com/Textualize/textual/issues/3714"""
+        super().clear_options()
+        self._clear_content_tracking()
+        return self
 
     @dataclass
     class Changed(Message):
