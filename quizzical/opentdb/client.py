@@ -92,6 +92,21 @@ class OpenTriviaDB:
         ]
         return self._categories
 
+    async def category(self, category_id: int) -> Category:
+        """Get a category based on its ID.
+
+        Args:
+            category_id: The ID of the category to get.
+
+        Returns:
+            The category data.
+        """
+        return next(
+            category
+            for category in await self.categories()
+            if category.id == category_id
+        )
+
     async def questions(
         self,
         amount: int = 10,
