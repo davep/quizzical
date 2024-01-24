@@ -144,7 +144,7 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
             self.query_one("#title", Input).value = self._quiz.title
             self.query_one("#number", Input).value = str(self._quiz.number_of_questions)
             self.query_one("#category", Select).value = (
-                self._quiz.category.id if self._quiz.category else Select.BLANK
+                self._quiz.category if self._quiz.category else Select.BLANK
             )
             self.query_one("#difficulty", Select).value = (
                 self._quiz.difficulty or Select.BLANK
@@ -193,17 +193,11 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
                 QuizParameters(
                     title=self.query_one("#title", Input).value,
                     number_of_questions=int(self.query_one("#number", Input).value),
-                    category=(
-                        next(
-                            candidate
-                            for candidate in self._categories
-                            if candidate.id == category
-                        )
-                        if isinstance(
-                            category := self.query_one("#category", Select).value, int
-                        )
-                        else None
-                    ),
+                    category=category
+                    if isinstance(
+                        category := self.query_one("#category", Select).value, int
+                    )
+                    else None,
                     difficulty=(
                         cast(Difficulty, difficulty)
                         if isinstance(

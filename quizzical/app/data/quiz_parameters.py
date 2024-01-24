@@ -8,7 +8,7 @@ from typing import Any
 
 ##############################################################################
 # Local imports.
-from ...opentdb import Category, Difficulty, Type
+from ...opentdb import Difficulty, Type
 
 
 ##############################################################################
@@ -45,7 +45,7 @@ class QuizParameters:
     number_of_questions: int = 10
     """The number of questions in the quiz."""
 
-    category: Category | None = None
+    category: int | None = None
     """The category for the quiz."""
 
     difficulty: Difficulty | None = None
