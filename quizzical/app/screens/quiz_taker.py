@@ -67,6 +67,12 @@ class QuizTaker(ModalScreen):
     """
 
     def __init__(self, client: OpenTriviaDB, quiz: QuizParameters) -> None:
+        """Initialise the quiz taking screen.
+
+        Args:
+            client: The API client.
+            quiz: The parameters for the quiz to take.
+        """
         super().__init__()
         self._client = client
         """The trivia database client object."""
