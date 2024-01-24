@@ -81,7 +81,7 @@ class Code(Enum):
                 Code.RATE_LIMIT: RateLimit,
             }[self]()
         except KeyError:
-            raise ValueError(f"Not a valid response code: {self}")
+            raise ValueError(f"Not a valid response code: {self}") from None
 
 
 ### response.py ends here
