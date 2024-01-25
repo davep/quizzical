@@ -38,7 +38,10 @@ class QuestionCounts(Widget):
     }
     """
 
-    counts: reactive[Counts | None] = reactive(None)
+    class Unavailable:
+        """Class used to mark that counts are unavailable."""
+
+    counts: reactive[Counts | None | Unavailable] = reactive(None)
     """The counts to show."""
 
     def __init__(
@@ -69,6 +72,8 @@ class QuestionCounts(Widget):
             display.add_column(title, no_wrap=True, justify="right", ratio=1)
         if self.counts is None:
             display.add_row(*(["Loading..."] * 4))
+        elif isinstance(self.counts, self.Unavailable):
+            display.add_row(*(["[red]Unavailable[/]"] * 4))
         else:
             display.add_row(
                 intcomma(self.counts.questions),

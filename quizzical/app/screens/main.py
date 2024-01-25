@@ -79,7 +79,15 @@ class Main(Screen):
     @work
     async def _load_counts(self) -> None:
         """Load up the question counts."""
-        self.query_one(QuestionCounts).counts = await self._trivia.overall_counts()
+        try:
+            self.query_one(QuestionCounts).counts = await self._trivia.overall_counts()
+        except self._trivia.RequestError:
+            self.query_one(QuestionCounts).counts = QuestionCounts.Unavailable()
+            self.notify(
+                "Unable to connect to https://opentdb.com/ at the moment!",
+                severity="error",
+                timeout=8,
+            )
 
     @on(QuizList.Changed)
     def _update_buttons(self, event: QuizList.Changed) -> None:
