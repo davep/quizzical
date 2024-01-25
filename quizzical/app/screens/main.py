@@ -76,6 +76,15 @@ class Main(Screen):
         """Load up the data for the main display."""
         self._load_counts()
 
+    def _connect_error(self) -> None:
+        """Let the user know there was an error when connecting to the backend."""
+        self.notify(
+            "Unable to connect to https://opentdb.com/ at the moment!",
+            severity="error",
+            timeout=8,
+        )
+        self.query_one("#buttons").disabled = True
+
     @work
     async def _load_counts(self) -> None:
         """Load up the question counts."""
@@ -83,11 +92,7 @@ class Main(Screen):
             self.query_one(QuestionCounts).counts = await self._trivia.overall_counts()
         except self._trivia.RequestError:
             self.query_one(QuestionCounts).counts = QuestionCounts.Unavailable()
-            self.notify(
-                "Unable to connect to https://opentdb.com/ at the moment!",
-                severity="error",
-                timeout=8,
-            )
+            self._connect_error()
 
     @on(QuizList.Changed)
     def _update_buttons(self, event: QuizList.Changed) -> None:
@@ -113,10 +118,13 @@ class Main(Screen):
     @work
     async def action_new(self) -> None:
         """Create a new quiz."""
-        if quiz := await self.app.push_screen_wait(
-            QuizMaker(await self._trivia.categories())
-        ):
-            self.query_one(QuizList).add_quiz(quiz)
+        try:
+            if quiz := await self.app.push_screen_wait(
+                QuizMaker(await self._trivia.categories())
+            ):
+                self.query_one(QuizList).add_quiz(quiz)
+        except self._trivia.RequestError:
+            self._connect_error()
 
     @on(Button.Pressed, "#edit")
     @work
@@ -124,10 +132,13 @@ class Main(Screen):
         """Edit the currently-highlighted quiz."""
         quizzes = self.query_one(QuizList)
         if (to_edit := quizzes.highlighted) is not None:
-            if quiz := await self.app.push_screen_wait(
-                QuizMaker(await self._trivia.categories(), quizzes.quizzes[to_edit])
-            ):
-                quizzes.modify_quiz(to_edit, quiz)
+            try:
+                if quiz := await self.app.push_screen_wait(
+                    QuizMaker(await self._trivia.categories(), quizzes.quizzes[to_edit])
+                ):
+                    quizzes.modify_quiz(to_edit, quiz)
+            except self._trivia.RequestError:
+                self._connect_error()
 
     @on(Button.Pressed, "#delete")
     @work
