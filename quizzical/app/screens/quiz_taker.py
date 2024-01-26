@@ -5,15 +5,15 @@
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Center, Grid, Vertical
-from textual.css.query import NoMatches
 from textual.reactive import var
 from textual.screen import ModalScreen
-from textual.widgets import Button, Digits, Label, LoadingIndicator, RadioSet
+from textual.widgets import Button, Digits, Label, LoadingIndicator
 
 ##############################################################################
 # Local imports.
 from ...opentdb import OpenTriviaDB, Question
 from ..data.quiz_parameters import QuizParameters, QuizTimer
+from ..widgets import Answers
 
 
 ##############################################################################
@@ -154,8 +154,9 @@ class QuizTaker(ModalScreen):
                 yield Digits("0", id="correct")
                 yield Digits("0", id="wrong")
             yield Label(id="question-text")
+            yield Answers()
             with Center():
-                yield Button("Cancel", id="cancel")
+                yield Button("Retire", id="retire")
 
     def on_mount(self) -> None:
         """Start the process of loading up the quiz once the DOM is ready."""
@@ -209,17 +210,7 @@ class QuizTaker(ModalScreen):
         self.query_one("#question-text", Label).update(
             self._quiz[self._question - 1].question
         )
-        try:
-            await self.query_one("#answers").remove()
-        except NoMatches:
-            pass
-        await self.query_one("#taker").mount(
-            RadioSet(
-                *[answer for answer in self._quiz[self._question - 1].answers],
-                id="answers",
-            ),
-            after="#question-text",
-        )
+        self.query_one(Answers).question = self._quiz[self._question - 1]
 
     def _watch__correct(self) -> None:
         self.query_one("#correct", Digits).update(str(self._correct))
@@ -240,16 +231,6 @@ class QuizTaker(ModalScreen):
             self.query_one("#taker").set_class(False, "hidden")
             self.query_one("#out-of", Digits).update(str(len(self._quiz)))
             self._question = 1
-
-    @on(RadioSet.Changed)
-    def answered(self, event: RadioSet.Changed) -> None:
-        question = self._quiz[self._question - 1]
-        if question.correct_answer == question.answers[event.index]:
-            self._correct += 1
-        else:
-            self._wrong += 1
-        self._answers.append(self._quiz[self._question - 1].answers[event.index])
-        self._question += 1
 
 
 ### quiz_taker.py ends here
