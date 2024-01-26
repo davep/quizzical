@@ -253,9 +253,11 @@ class QuizTaker(ModalScreen):
             self._correct += 1
         else:
             self._wrong += 1
+        self._answers.append(event.answer)
         if self._question < (len(self._quiz) - 1):
             self._question += 1
         else:
+            # TODO: Show the results, see self._answers, etc.
             self.notify("DONE!", timeout=10)
 
 
