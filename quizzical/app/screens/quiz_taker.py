@@ -96,6 +96,22 @@ class QuizTaker(ModalScreen):
                 }
             }
         }
+
+        #results {
+            width: auto;
+            height: auto;
+            padding: 1 2 0 2;
+            #answers {
+                padding: 1 0 1 0;
+            }
+            Label {
+                width: auto;
+            }
+            Center {
+                width: 100%;
+                layout: horizontal;
+            }
+        }
     }
     """
 
@@ -160,7 +176,14 @@ class QuizTaker(ModalScreen):
             yield Label(id="question-text")
             yield Answers()
             with Center():
-                yield Button("Retire", id="retire")
+                yield Button("Retire", id="cancel")
+
+        with Vertical(id="results", classes="hidden") as quiz_results:
+            quiz_results.border_title = f"Results of '{self._quiz_parameters.title}'"
+            yield Label(id="final-score")
+            yield Label(id="answers")
+            with Center():
+                yield Button("Close", id="cancel")
 
     def on_mount(self) -> None:
         """Start the process of loading up the quiz once the DOM is ready."""
@@ -203,7 +226,6 @@ class QuizTaker(ModalScreen):
         with self.app.batch_update():
             self.query_one("#loader").set_class(True, "hidden")
             self.query_one("#confirmer").set_class(False, "hidden")
-            self.query_one("#taker").set_class(True, "hidden")
             self.query_one("#confirmer #details", Label).update(
                 await self._quiz_summary()
             )
@@ -234,7 +256,6 @@ class QuizTaker(ModalScreen):
     def take_quiz(self) -> None:
         """Start the process of taking the quiz."""
         with self.app.batch_update():
-            self.query_one("#loader").set_class(True, "hidden")
             self.query_one("#confirmer").set_class(True, "hidden")
             self.query_one("#taker").set_class(False, "hidden")
             self.query_one("#out-of", Digits).update(str(len(self._quiz)))
@@ -257,8 +278,23 @@ class QuizTaker(ModalScreen):
         if self._question < (len(self._quiz) - 1):
             self._question += 1
         else:
-            # TODO: Show the results, see self._answers, etc.
-            self.notify("DONE!", timeout=10)
+            self.call_next(self._show_result)
+
+    async def _show_result(self) -> None:
+        """Show the result of the quiz."""
+        with self.app.batch_update():
+            self.query_one("#taker").set_class(True, "hidden")
+            self.query_one("#results").set_class(False, "hidden")
+            self.query_one("#final-score", Label).update(
+                f"Final score is {self._correct} out of {len(self._quiz)}."
+            )
+            self.query_one("#answers", Label).update(
+                "\n".join(
+                    f"{n + 1}. {answer} ({'[green]right[/]' if answer == self._quiz[n].correct_answer else '[red]wrong[/]'})"
+                    for n, answer in enumerate(self._answers)
+                )
+            )
+            self.query_one("#results #cancel").focus()
 
 
 ### quiz_taker.py ends here
