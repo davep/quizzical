@@ -210,6 +210,7 @@ class QuizTaker(ModalScreen):
             self.query_one("#take").focus()
 
     async def _watch__question(self) -> None:
+        """React to the question number being bumped."""
         self.query_one("#question", Digits).update(str(self._question + 1))
         self.query_one("#question-text", Label).update(
             self._quiz[self._question].question
@@ -217,9 +218,11 @@ class QuizTaker(ModalScreen):
         self.query_one(Answers).question = self._quiz[self._question]
 
     def _watch__correct(self) -> None:
+        """React to the right count being changed."""
         self.query_one("#correct", Digits).update(str(self._correct))
 
     def _watch__wrong(self) -> None:
+        """React to the wrong count being changed."""
         self.query_one("#wrong", Digits).update(str(self._wrong))
 
     @on(Button.Pressed, "#cancel")
@@ -229,6 +232,7 @@ class QuizTaker(ModalScreen):
 
     @on(Button.Pressed, "#take")
     def take_quiz(self) -> None:
+        """Start the process of taking the quiz."""
         with self.app.batch_update():
             self.query_one("#loader").set_class(True, "hidden")
             self.query_one("#confirmer").set_class(True, "hidden")
