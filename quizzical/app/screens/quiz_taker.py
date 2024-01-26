@@ -70,6 +70,9 @@ class QuizTaker(ModalScreen):
                 grid-size: 4 2;
                 height: auto;
                 grid-rows: auto;
+                margin-top: 1;
+                width: 100%;
+
                 Label, Digits {
                     width: 1fr;
                     text-align: center;
@@ -79,7 +82,7 @@ class QuizTaker(ModalScreen):
             #question-text {
                 width: 1fr;
                 height: auto;
-                padding: 2;
+                padding: 1 2 1 2;
                 text-style: bold;
             }
 
@@ -96,7 +99,7 @@ class QuizTaker(ModalScreen):
     }
     """
 
-    _question: var[int] = var(0, init=False)
+    _question: var[int] = var(-1, init=False)
     """The number of the question being asked."""
 
     _answers: var[list[str]] = var(list, init=False)
@@ -121,6 +124,7 @@ class QuizTaker(ModalScreen):
         self._quiz_parameters = quiz
         """The parameters of the quiz we're going to take."""
         self._quiz: list[Question] = []
+        """The questions being asked as part of the quiz."""
 
     def compose(self) -> ComposeResult:
         """Compose the quiz taking screen."""
@@ -206,11 +210,11 @@ class QuizTaker(ModalScreen):
             self.query_one("#take").focus()
 
     async def _watch__question(self) -> None:
-        self.query_one("#question", Digits).update(str(self._question))
+        self.query_one("#question", Digits).update(str(self._question + 1))
         self.query_one("#question-text", Label).update(
-            self._quiz[self._question - 1].question
+            self._quiz[self._question].question
         )
-        self.query_one(Answers).question = self._quiz[self._question - 1]
+        self.query_one(Answers).question = self._quiz[self._question]
 
     def _watch__correct(self) -> None:
         self.query_one("#correct", Digits).update(str(self._correct))
@@ -230,7 +234,25 @@ class QuizTaker(ModalScreen):
             self.query_one("#confirmer").set_class(True, "hidden")
             self.query_one("#taker").set_class(False, "hidden")
             self.query_one("#out-of", Digits).update(str(len(self._quiz)))
-            self._question = 1
+            self._question = 0
+            self.query_one(Answers).focus()
+
+    @on(Answers.Correct)
+    @on(Answers.Incorrect)
+    def process_answer(self, event: Answers.Correct | Answers.Incorrect) -> None:
+        """Process an answer given to the Answers widget.
+
+        Args:
+            event: The event to process.
+        """
+        if isinstance(event, Answers.Correct):
+            self._correct += 1
+        else:
+            self._wrong += 1
+        if self._question < (len(self._quiz) - 1):
+            self._question += 1
+        else:
+            self.notify("DONE!", timeout=10)
 
 
 ### quiz_taker.py ends here
