@@ -1,13 +1,18 @@
 """Provides the screen used to take a quiz."""
 
 ##############################################################################
+# Rich imports.
+from rich.console import Group
+from rich.table import Table
+
+##############################################################################
 # Textual imports.
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Center, Grid, Vertical
 from textual.reactive import var
 from textual.screen import ModalScreen
-from textual.widgets import Button, Digits, Label, LoadingIndicator
+from textual.widgets import Button, Digits, Label, LoadingIndicator, OptionList
 
 ##############################################################################
 # Local imports.
@@ -99,13 +104,19 @@ class QuizTaker(ModalScreen):
 
         #results {
             width: auto;
+            max-width: 60%;
             height: auto;
+            max-height: 80%;
             padding: 1 2 0 2;
-            #answers {
-                padding: 1 0 1 0;
-            }
             Label {
                 width: auto;
+            }
+            #answers {
+                height: 1fr;
+                margin: 1 0 1 0;
+                &> .option-list--option {
+                    padding: 0 5 1 0;
+                }
             }
             Center {
                 width: 100%;
@@ -181,7 +192,7 @@ class QuizTaker(ModalScreen):
         with Vertical(id="results", classes="hidden") as quiz_results:
             quiz_results.border_title = f"Results of '{self._quiz_parameters.title}'"
             yield Label(id="final-score")
-            yield Label(id="answers")
+            yield OptionList(id="answers")
             with Center():
                 yield Button("Close", id="cancel")
 
@@ -280,6 +291,31 @@ class QuizTaker(ModalScreen):
         else:
             self.call_next(self._show_result)
 
+    def _question_result(self, question: int) -> Group:
+        """Get the result display for a question.
+
+        Args:
+            question: The question to get the display for.
+
+        Returns:
+            The display.
+        """
+        question_row = Table.grid()
+        question_row.add_column(width=5, justify="right")
+        question_row.add_column(width=1)
+        question_row.add_column(ratio=1)
+        question_row.add_row(f"{question + 1}. ", " ", self._quiz[question].question)
+        answer_row = Table.grid()
+        answer_row.add_column(width=6)
+        answer_row.add_column(ratio=1)
+        colour = (
+            "green"
+            if self._answers[question] == self._quiz[question].correct_answer
+            else "red"
+        )
+        answer_row.add_row("", f"[{colour}]{self._answers[question]}[/]")
+        return Group(question_row, answer_row)
+
     async def _show_result(self) -> None:
         """Show the result of the quiz."""
         with self.app.batch_update():
@@ -288,11 +324,8 @@ class QuizTaker(ModalScreen):
             self.query_one("#final-score", Label).update(
                 f"Final score is {self._correct} out of {len(self._quiz)}."
             )
-            self.query_one("#answers", Label).update(
-                "\n".join(
-                    f"{n + 1}. {answer} ({'[green]right[/]' if answer == self._quiz[n].correct_answer else '[red]wrong[/]'})"
-                    for n, answer in enumerate(self._answers)
-                )
+            self.query_one("#answers", OptionList).add_options(
+                self._question_result(number) for number in range(len(self._answers))
             )
             self.query_one("#results #cancel").focus()
 
