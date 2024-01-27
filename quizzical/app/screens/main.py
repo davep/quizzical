@@ -4,7 +4,6 @@
 # Textual imports.
 from textual import on, work
 from textual.app import ComposeResult
-from textual.binding import Binding
 from textual.containers import Horizontal
 from textual.screen import Screen
 from textual.widgets import Button, Label
@@ -49,10 +48,10 @@ class Main(Screen):
     """
 
     BINDINGS = [
-        Binding("r", "run", "Run"),
-        Binding("n", "new", "New"),
-        Binding("e", "edit", "Edit"),
-        Binding("d", "delete", "Delete"),
+        ("r", "run"),
+        ("n", "new"),
+        ("e", "edit"),
+        ("d", "delete"),
     ]
 
     def __init__(self) -> None:
