@@ -42,6 +42,7 @@ class Main(Screen):
         padding-bottom: 1;
         Button {
             width: 1fr;
+            min-width: 0;
             margin: 0 1 0 1;
         }
     }
