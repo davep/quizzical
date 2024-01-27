@@ -52,6 +52,7 @@ class Main(Screen):
         ("n", "new"),
         ("e", "edit"),
         ("d", "delete"),
+        ("q", "quit"),
     ]
 
     def __init__(self) -> None:
@@ -70,6 +71,7 @@ class Main(Screen):
             yield Button("New [dim]\\[n][/]", id="new")
             yield Button("Edit [dim]\\[e][/]", id="edit", disabled=True)
             yield Button("Delete [dim]\\[d][/]", id="delete", disabled=True)
+            yield Button("Quit [dim]\\[q][/]", id="quit")
 
     def on_mount(self) -> None:
         """Load up the data for the main display."""
@@ -148,6 +150,11 @@ class Main(Screen):
                 Confirm("Delete Quiz", "Are you sure you want to delete that quiz?")
             ):
                 self.query_one(QuizList).remove_quiz(to_delete)
+
+    @on(Button.Pressed, "#quit")
+    def action_quit(self) -> None:
+        """Quit the application."""
+        self.app.exit()
 
 
 ### main.py ends here
