@@ -154,12 +154,14 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
             )
             self.query_one("#timer-type", Select).value = self._quiz.timer_type
             self.query_one("#timer-seconds", Input).value = str(self._quiz.timer_value)
+            self._update_timer_fields()
 
     @on(Select.Changed, "#timer-type")
-    def _update_timer_fields(self, event: Select.Changed) -> None:
+    def _update_timer_fields(self) -> None:
         """Refresh the state of the timer input fields."""
+        timer_type = self.query_one("#timer-type", Select).value
         for widget in self.query(".timer"):
-            widget.disabled = event.value == QuizTimer.NONE
+            widget.disabled = timer_type == QuizTimer.NONE
             if isinstance(widget, Input):
                 if widget.disabled:
                     widget.validators = []
