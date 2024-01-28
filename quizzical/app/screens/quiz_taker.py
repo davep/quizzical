@@ -10,6 +10,7 @@ from rich.table import Table
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Center, Grid, Vertical
+from textual.css.query import NoMatches
 from textual.reactive import var
 from textual.screen import ModalScreen
 from textual.widgets import Button, Digits, Label, LoadingIndicator, OptionList
@@ -345,6 +346,15 @@ class QuizTaker(ModalScreen):
 
     async def _show_result(self) -> None:
         """Show the result of the quiz."""
+        # Ensure that any running countdown is cancelled; we're all done
+        # here.
+        try:
+            self.query_one(Countdown).cancel()
+        except NoMatches:
+            # Failure to find a countdown is fine; it just means there's no
+            # countdown to begin with.
+            pass
+        # Having done that, show the results of the quiz.
         with self.app.batch_update():
             self.query_one("#taker").set_class(True, "hidden")
             self.query_one("#results").set_class(False, "hidden")
