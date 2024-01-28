@@ -216,7 +216,7 @@ class QuizMaker(ModalScreen[QuizParameters | None]):
                         else None
                     ),
                     timer_type=(
-                        cast(QuizTimer, timer_type)
+                        timer_type
                         if isinstance(
                             timer_type := self.query_one("#timer-type", Select).value,
                             QuizTimer,
