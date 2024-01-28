@@ -15,6 +15,10 @@ from textual.screen import ModalScreen
 from textual.widgets import Button, Digits, Label, LoadingIndicator, OptionList
 
 ##############################################################################
+# Textual countdown imports.
+from textual_countdown import Countdown
+
+##############################################################################
 # Local imports.
 from ...opentdb import OpenTriviaDB, Question
 from ..data.quiz_parameters import QuizParameters, QuizTimer
@@ -84,6 +88,10 @@ class QuizTaker(ModalScreen):
                 }
             }
 
+            Countdown {
+                width: 100%;
+            }
+
             #question-text {
                 width: 1fr;
                 height: auto;
@@ -129,7 +137,7 @@ class QuizTaker(ModalScreen):
     _question: var[int] = var(-1, init=False)
     """The number of the question being asked."""
 
-    _answers: var[list[str]] = var(list, init=False)
+    _answers: var[list[str | None]] = var(list, init=False)
     """Holds the answers given."""
 
     _correct: var[int] = var(0, init=False)
@@ -184,6 +192,8 @@ class QuizTaker(ModalScreen):
                 yield Digits("0", id="out-of")
                 yield Digits("0", id="correct")
                 yield Digits("0", id="wrong")
+            if self._quiz_parameters.timer_type != QuizTimer.NONE:
+                yield Countdown()
             yield Label(id="question-text")
             yield Answers()
             with Center():
@@ -249,6 +259,8 @@ class QuizTaker(ModalScreen):
             self._quiz[self._question].question
         )
         self.query_one(Answers).question = self._quiz[self._question]
+        if self._quiz_parameters.timer_type == QuizTimer.PER_QUESTION:
+            self.query_one(Countdown).start(self._quiz_parameters.timer_value)
 
     def _watch__correct(self) -> None:
         """React to the right count being changed."""
@@ -272,6 +284,8 @@ class QuizTaker(ModalScreen):
             self.query_one("#out-of", Digits).update(str(len(self._quiz)))
             self._question = 0
             self.query_one(Answers).focus()
+            if self._quiz_parameters.timer_type == QuizTimer.WHOLE_QUIZ:
+                self.query_one(Countdown).start(self._quiz_parameters.timer_value)
 
     @on(Answers.Correct)
     @on(Answers.Incorrect)
@@ -289,6 +303,17 @@ class QuizTaker(ModalScreen):
         if self._question < (len(self._quiz) - 1):
             self._question += 1
         else:
+            self.call_next(self._show_result)
+
+    @on(Countdown.Finished)
+    def process_timout(self) -> None:
+        """Process a timeout while answering a question."""
+        if self._quiz_parameters.timer_type == QuizTimer.PER_QUESTION:
+            self.query_one(Answers).skip_question()
+        else:
+            questions_left = len(self._quiz) - len(self._answers)
+            self._answers.extend([None] * questions_left)
+            self._wrong += questions_left
             self.call_next(self._show_result)
 
     def _question_result(self, question: int) -> Group:
@@ -313,7 +338,9 @@ class QuizTaker(ModalScreen):
             if self._answers[question] == self._quiz[question].correct_answer
             else "red"
         )
-        answer_row.add_row("", f"[{colour}]{self._answers[question]}[/]")
+        answer_row.add_row(
+            "", f"[{colour}]{self._answers[question] or '(No answer given)'}[/]"
+        )
         return Group(question_row, answer_row)
 
     async def _show_result(self) -> None:
