@@ -61,7 +61,7 @@ class Answers(Vertical, can_focus=True):
     class Given(Message):
         """Base class for the given answer."""
 
-        answer: str
+        answer: str | None = None
         """The answer that was given."""
 
     class Correct(Given):
@@ -100,6 +100,11 @@ class Answers(Vertical, can_focus=True):
             True, "correct" if isinstance(self.answer, self.Correct) else "incorrect"
         )
         self.set_timer(0.6, partial(self.post_message, self.answer))
+
+    def skip_question(self) -> None:
+        """Skip the current question."""
+        self.query(Answer).set_class(True, "incorrect")
+        self.set_timer(0.6, partial(self.post_message, self.Incorrect()))
 
 
 ### answers.py ends here
