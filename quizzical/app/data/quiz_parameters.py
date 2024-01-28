@@ -4,7 +4,7 @@
 # Python imports.
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 ##############################################################################
 # Local imports.
@@ -27,11 +27,14 @@ class QuizTimer(Enum):
     @property
     def description(self) -> str:
         """The description of the timer type."""
-        return {
-            self.NONE: "No Timer",
-            self.PER_QUESTION: "Seconds per question",
-            self.WHOLE_QUIZ: "Seconds for the whole quiz",
-        }[self]
+        return cast(
+            dict[QuizTimer, str],
+            {
+                self.NONE: "No Timer",
+                self.PER_QUESTION: "Seconds per question",
+                self.WHOLE_QUIZ: "Seconds for the whole quiz",
+            },
+        )[self]
 
 
 ##############################################################################
