@@ -8,6 +8,7 @@ textual = "*"
 httpx = "*"
 humanize = "*"
 xdg-base-dirs = "*"
+textual-countdown = "*"
 
 [dev-packages]
 pre-commit = "*"
