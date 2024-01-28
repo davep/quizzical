@@ -306,7 +306,7 @@ class QuizTaker(ModalScreen):
             self.call_next(self._show_result)
 
     @on(Countdown.Finished)
-    def process_timout(self) -> None:
+    def process_timeout(self) -> None:
         """Process a timeout while answering a question."""
         if self._quiz_parameters.timer_type == QuizTimer.PER_QUESTION:
             self.query_one(Answers).skip_question()
