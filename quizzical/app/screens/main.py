@@ -19,7 +19,7 @@ from .quiz_taker import QuizTaker
 
 
 ##############################################################################
-class Main(Screen):
+class Main(Screen[None]):
     """The main screen of the application."""
 
     CSS = """
