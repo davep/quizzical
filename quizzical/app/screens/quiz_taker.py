@@ -27,7 +27,7 @@ from ..widgets import Answers
 
 
 ##############################################################################
-class QuizTaker(ModalScreen):
+class QuizTaker(ModalScreen[None]):
     """Screen for taking a quiz."""
 
     DEFAULT_CSS = """
