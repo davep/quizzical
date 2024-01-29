@@ -112,7 +112,7 @@ class OpenTriviaDB:
         amount: int = 10,
         category: int | Category | None = None,
         difficulty: Difficulty | None = None,
-        type: Type | None = None,
+        of_type: Type | None = None,
     ) -> list[Question]:
         """Get a collection of questions from the API.
 
@@ -120,7 +120,7 @@ class OpenTriviaDB:
             amount: The amount of questions to get.
             category: The category of questions to get.
             difficulty: The difficulty of questions to get.
-            type: The type of question to get.
+            of_type: The type of question to get.
 
         Returns:
             The questions.
@@ -135,7 +135,7 @@ class OpenTriviaDB:
         if difficulty is not None:
             params["difficulty"] = difficulty
         if type is not None:
-            params["type"] = type
+            params["type"] = of_type
 
         response = loads(await self._call("api", **params))
 

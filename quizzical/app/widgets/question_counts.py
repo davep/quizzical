@@ -44,7 +44,7 @@ class QuestionCounts(Widget):
     counts: reactive[Counts | None | Unavailable] = reactive(None)
     """The counts to show."""
 
-    def __init__(
+    def __init__(  # pylint:disable=redefined-builtin
         self,
         title: str,
         name: str | None = None,

@@ -227,7 +227,10 @@ class QuizTaker(ModalScreen[None]):
         if self._quiz_parameters.question_type is None:
             summary += "Multiple choice and true/false questions\n"
         else:
-            summary += f"{'True or false' if self._quiz_parameters.question_type == 'boolean' else 'Multiple choice'} questions\n"
+            summary += (
+                f"{'True or false' if self._quiz_parameters.question_type == 'boolean' else 'Multiple choice'}"
+                " questions\n"
+            )
         if self._quiz_parameters.timer_type == QuizTimer.PER_QUESTION:
             summary += f"{self._quiz_parameters.timer_value} seconds per question\n"
         if self._quiz_parameters.timer_type == QuizTimer.WHOLE_QUIZ:
@@ -243,7 +246,7 @@ class QuizTaker(ModalScreen[None]):
             amount=self._quiz_parameters.number_of_questions,
             category=self._quiz_parameters.category,
             difficulty=self._quiz_parameters.difficulty,
-            type=self._quiz_parameters.question_type,
+            of_type=self._quiz_parameters.question_type,
         )
         with self.app.batch_update():
             self.query_one("#loader").set_class(True, "hidden")
