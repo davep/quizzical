@@ -34,7 +34,7 @@ and once you start you'll be shown a series of questions; press keys
 Once the quiz is over you can view your results and see which answers were
 right and which were wrong:
 
-![Viewing som eresults](images/results.png)
+![Viewing some results](images/results.png)
 
 ## Getting help
 
