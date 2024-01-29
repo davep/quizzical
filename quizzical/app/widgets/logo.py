@@ -41,7 +41,7 @@ class Logo(Widget):
         """Render the logo."""
         if self.container_size.width < 20:
             return LOGO_SMALL
-        elif self.container_size.width < 65:
+        if self.container_size.width < 65:
             return LOGO_MEDIUM
         return LOGO
 
