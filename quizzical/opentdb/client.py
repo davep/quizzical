@@ -134,7 +134,7 @@ class OpenTriviaDB:
             params["category"] = str(category)
         if difficulty is not None:
             params["difficulty"] = difficulty
-        if type is not None:
+        if of_type is not None:
             params["type"] = of_type
 
         response = loads(await self._call("api", **params))
