@@ -5,7 +5,7 @@
 Quizzical is a terminal-based quiz game, using [The Open Trivia
 Database](https://opentdb.com/) as the back end.
 
-![Quizzical](images/quizzical.png)
+![Quizzical](https://raw.githubusercontent.com/davep/quizzical/main/images/quizzical.png)
 
 ## Installing
 
@@ -24,17 +24,17 @@ use the `New` button to create a new quiz with your choice of parameters,
 use the `Run` button to play a game. When you run a new game you'll be shown
 the parameters:
 
-![Starting a new quiz](images/start-quiz.png)
+![Starting a new quiz](https://raw.githubusercontent.com/davep/quizzical/main/images/start-quiz.png)
 
 and once you start you'll be shown a series of questions; press keys
 <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd> or <kbd>4</kbd> to answer each one.
 
-![An example question](images/question.png)
+![An example question](https://raw.githubusercontent.com/davep/quizzical/main/images/question.png)
 
 Once the quiz is over you can view your results and see which answers were
 right and which were wrong:
 
-![Viewing some results](images/results.png)
+![Viewing some results](https://raw.githubusercontent.com/davep/quizzical/main/images/results.png)
 
 ## Getting help
 
