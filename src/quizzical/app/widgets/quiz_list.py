@@ -50,12 +50,6 @@ class QuizList(OptionList):
     quizzes: var[list[QuizParameters]] = var(list, always_update=True, init=False)
     """The list of all the quiz parameters."""
 
-    def clear_options(self) -> Self:
-        """Workaround for https://github.com/Textualize/textual/issues/3714"""
-        super().clear_options()
-        self._clear_content_tracking()
-        return self
-
     @dataclass
     class Changed(Message):
         """Message sent when the quiz list has been changed."""
