@@ -33,7 +33,6 @@ class QuestionCounts(Widget):
     QuestionCounts {
         height: auto;
         width: 1fr;
-        background: $primary;
         color: $text-muted;
     }
     """

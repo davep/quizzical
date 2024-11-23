@@ -26,18 +26,15 @@ class Main(Screen[None]):
     #version {
         width: 1fr;
         content-align: center middle;
-        background: $primary;
         padding-bottom: 1;
     }
 
     QuizList {
         border-top: solid $boost;
-        background: $primary;
     }
 
     #buttons {
         height: auto;
-        background: $primary;
         border-top: solid $boost;
         padding-bottom: 1;
         Button {

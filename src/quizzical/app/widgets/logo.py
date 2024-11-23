@@ -30,7 +30,6 @@ class Logo(Widget):
         height: auto;
         content-align: center middle;
         color: $warning;
-        background: $primary;
         padding-bottom: 1;
     }
     """
