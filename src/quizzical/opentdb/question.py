@@ -4,6 +4,7 @@
 # Python imports.
 from dataclasses import dataclass, field
 from html import unescape
+
 from typing_extensions import Literal
 
 ##############################################################################
