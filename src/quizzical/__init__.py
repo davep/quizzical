@@ -1,4 +1,4 @@
-"""Coming soon."""
+"""Application information."""
 
 ######################################################################
 # Main app information.
