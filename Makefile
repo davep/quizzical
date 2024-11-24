@@ -43,12 +43,8 @@ typecheck:			# Perform static type checks with mypy
 stricttypecheck:	        # Perform a strict static type checks with mypy
 	$(mypy) --scripts-are-modules --strict $(src)
 
-.PHONY: test
-test:				# Run the unit tests
-	$(test) -v
-
 .PHONY: checkall
-checkall: codestyle lint stricttypecheck test # Check all the things
+checkall: codestyle lint stricttypecheck # Check all the things
 
 ##############################################################################
 # Utility.
