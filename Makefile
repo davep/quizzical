@@ -47,6 +47,24 @@ stricttypecheck:	        # Perform a strict static type checks with mypy
 checkall: codestyle lint stricttypecheck # Check all the things
 
 ##############################################################################
+# Package/publish.
+.PHONY: package
+package:			# Package the library
+	rye build
+
+.PHONY: spackage
+spackage:			# Create a source package for the library
+	rye build --sdist
+
+.PHONY: testdist
+testdist: package			# Perform a test distribution
+	rye publish --yes --skip-existing --repository testpypi --repository-url https://test.pypi.org/legacy/
+
+.PHONY: dist
+dist: package			# Upload to pypi
+	rye publish --yes --skip-existing
+
+##############################################################################
 # Utility.
 .PHONY: repl
 repl:				# Start a Python REPL in the venv.
@@ -62,6 +80,10 @@ pep8ify:			# Reformat the code to be as PEP8 as possible.
 
 .PHONY: tidy
 tidy: delint pep8ify		# Tidy up the code, fixing lint and format issues.
+
+.PHONY: clean
+clean:				# Clean the build directories
+	rm -rf dist
 
 .PHONY: help
 help:				# Display this help
