@@ -11,9 +11,7 @@ from textual.geometry import Size
 from textual.widget import Widget
 
 ##############################################################################
-LOGO: Final[
-    str
-] = r""" ____   ____   ____   ____   ____   ____   ____   ____   ____
+LOGO: Final[str] = r""" ____   ____   ____   ____   ____   ____   ____   ____   ____
 ||Q || ||u || ||i || ||z || ||z || ||i || ||c || ||a || ||l ||
 ||__|| ||__|| ||__|| ||__|| ||__|| ||__|| ||__|| ||__|| ||__||
 |/__\| |/__\| |/__\| |/__\| |/__\| |/__\| |/__\| |/__\| |/__\|
@@ -32,7 +30,6 @@ class Logo(Widget):
         height: auto;
         content-align: center middle;
         color: $warning;
-        background: $primary;
         padding-bottom: 1;
     }
     """
