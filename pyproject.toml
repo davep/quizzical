@@ -1,8 +1,8 @@
 [project]
 name = "quizzical"
-version = "0.2.0"
+version = "0.2.1"
 description = "A trivia quiz game for the terminal"
-license = { file = "LICENSE" }
+license = { text = "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"}
 authors = [
     { name = "Dave Pearson", email = "davep@davep.org" }
 ]
@@ -22,9 +22,8 @@ classifiers = [
     "Intended Audience :: End Users/Desktop",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Games/Entertainment",
     "Topic :: Internet",
     "Topic :: Terminals",
@@ -32,8 +31,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/davep/bird2glass"
-Repository = "https://github.com/davep/bird2glass"
+Homepage = "https://github.com/davep/quizzical"
+Repository = "https://github.com/davep/quizzical"
 Documentation = "https://github.com/davep/quizzical/blob/main/README.md"
 Source = "https://github.com/davep/quizzical"
 Issues = "https://github.com/davep/quizzical/issues"
