@@ -32,8 +32,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/davep/bird2glass"
-Repository = "https://github.com/davep/bird2glass"
+Homepage = "https://github.com/davep/quizzical"
+Repository = "https://github.com/davep/quizzical"
 Documentation = "https://github.com/davep/quizzical/blob/main/README.md"
 Source = "https://github.com/davep/quizzical"
 Issues = "https://github.com/davep/quizzical/issues"
